@@ -95,16 +95,14 @@ const TabBar = ({state, descriptors, navigation}) => {
           onPress={onPress}
           onLongPress={onLongPress}
           style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-          key={index}
-        >
+          key={index}>
           {icons(route, isFocused, 30)}
           <Text
             style={{
               fontSize: 10,
               marginTop: 5,
               color: isFocused ? c.colors.accent : c.colors.text.medium,
-            }}
-          >
+            }}>
             {label}
           </Text>
         </TouchableOpacity>

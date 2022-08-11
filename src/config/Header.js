@@ -41,8 +41,7 @@ const Header = () => {
             marginTop: 20,
             fontFamily: 'Boiling',
             color: c.colors.text.dark,
-          }}
-        >
+          }}>
           Jugglearn
         </Text>
         <SVGIcon

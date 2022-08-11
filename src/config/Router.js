@@ -45,8 +45,7 @@ const Tabs = () => {
     <Tab.Navigator
       initialRouteName="courses"
       tabBar={props => <TabBar {...props} />}
-      screenOptions={{headerShown: false}}
-    >
+      screenOptions={{headerShown: false}}>
       <Tab.Screen
         name="courses"
         component={Courses}
@@ -82,8 +81,7 @@ const ModalStack = () => {
         ...TransitionPresets.ModalSlideFromBottomIOS,
         header: Header,
       })}
-      initialRouteName="courses"
-    >
+      initialRouteName="courses">
       <Stack.Screen
         name="tabs"
         component={Tabs}
@@ -111,8 +109,7 @@ const AuthStack = () => {
         gestureEnabled: false,
         ...TransitionPresets.ModalSlideFromBottomIOS,
       }}
-      initialRouteName="modalStack"
-    >
+      initialRouteName="authentication">
       <Stack.Screen
         name="authentication"
         component={Authentication}
