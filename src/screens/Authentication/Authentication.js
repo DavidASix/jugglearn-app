@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
+import IIcon from 'react-native-vector-icons/Ionicons';
 
 const c = require('../../assets/constants');
 
@@ -77,7 +78,7 @@ const Authentication = props => {
                 end={{x: 0.5, y: 0}}
                 colors={[c.colors.balls.red, c.colors.balls.blue]}
                 style={styles.gradButton}>
-                <Text style={{fontSize: 26}}>@</Text>
+                <IIcon name="mail-outline" size={25} color="#FFF" />
               </LinearGradient>
             </TouchableOpacity>
             <Text style={styles.buttonText}>Email</Text>
