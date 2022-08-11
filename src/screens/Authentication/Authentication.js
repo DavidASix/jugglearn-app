@@ -14,7 +14,6 @@ import IIcon from 'react-native-vector-icons/Ionicons';
 const c = require('../../assets/constants');
 
 const Authentication = props => {
-  const iconSize = 90;
   return (
     <View style={{flex: 1, width: '100%'}}>
       <View style={styles.videoContainer}>
@@ -30,7 +29,7 @@ const Authentication = props => {
         <Image
           source={require('../../assets/icons/icon.png')}
           defaultSource={require('../../assets/icons/icon.png')}
-          style={{height: iconSize, width: iconSize, position: 'absolute'}}
+          style={{height: 100, width: 100, position: 'absolute'}}
           resizeMethod="scale"
           resizeMode="cover"
         />
