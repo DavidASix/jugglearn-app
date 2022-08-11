@@ -44,18 +44,44 @@ const Authentication = props => {
       <View style={styles.section}>
         <Text>Sign in with</Text>
         <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => props.navigation.navigate('modalStack')}>
-            <LinearGradient
-              start={{x: 0, y: 0}}
-              end={{x: 0.5, y: 0}}
-              colors={[c.colors.balls.red, c.colors.balls.blue]}
-              style={styles.gradButton}>
-              <Text style={{fontSize: 26}}>@</Text>
-            </LinearGradient>
-            <Text style={{ fontSize: 16}}>Email</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => props.navigation.navigate('modalStack')}>
+              <Image
+                source={require('../../assets/icons/appleSignIn.jpg')}
+                resizeMode="cover"
+                style={{width: '100%', height: '100%'}}
+              />
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Apple</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => props.navigation.navigate('modalStack')}>
+              <Image
+                source={require('../../assets/icons/googleSignIn.jpg')}
+                resizeMode="cover"
+                style={{width: '100%', height: '100%'}}
+              />
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Google</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => props.navigation.navigate('modalStack')}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 0.5, y: 0}}
+                colors={[c.colors.balls.red, c.colors.balls.blue]}
+                style={styles.gradButton}>
+                <Text style={{fontSize: 26}}>@</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Email</Text>
+          </View>
         </View>
       </View>
     </View>
@@ -79,17 +105,25 @@ const styles = {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    marginVertical: 5,
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 15,
+    elevation: 5,
+    marginHorizontal: 10,
+    width: 50,
+    height: 50,
+    overflow: 'hidden',
+  },
+  buttonText: {
+    fontSize: 14,
+    textAlign: 'center',
   },
   gradButton: {
-    height: 50,
-    width: 50,
-    borderRadius: 20,
-    elevation: 5,
+    height: '100%',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
