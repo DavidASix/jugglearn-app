@@ -4,7 +4,7 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
+  Animated,
   TouchableOpacity,
 } from 'react-native';
 import Video from 'react-native-video';
@@ -13,9 +13,63 @@ import IIcon from 'react-native-vector-icons/Ionicons';
 
 const c = require('../../assets/constants');
 
-const Authentication = props => {
+function Authentication(props) {
+  const [emailPressed, setEmailPressed] = useState(false);
+  const [loginFormHeight] = useState(new Animated.Value(0));
+
+  const LoginForm = () => {
+    //if (!emailPressed) return null;
+    return (
+      <Animated.View style={[styles.loginForm, {height: loginFormHeight}]}>
+        <View style={[styles.formAngle, {position: 'absolute'}]}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 0.2, y: 1}}
+            colors={[c.colors.gradient.light, c.colors.gradient.dark]}
+            style={{position: 'absolute', height: '100%', width: '100%'}}
+          />
+        </View>
+        <View style={styles.formsContainer}>
+          <Text
+            style={{
+              fontSize: 24,
+              color: c.colors.text.light,
+              alignSelf: 'center',
+              fontFamily: 'Boiling',
+            }}>
+            JuggLearn
+          </Text>
+          <Text>Or sign up here</Text>
+        </View>
+      </Animated.View>
+    );
+  };
+
+  const onPressEmail = () => {
+    if (!emailPressed) {
+      Animated.spring(loginFormHeight, {
+        toValue: 300,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(loginFormHeight, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }
+    setEmailPressed(!emailPressed);
+  };
+
   return (
-    <View style={{flex: 1, width: '100%'}}>
+    <View
+      style={{
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
       <View style={styles.videoContainer}>
         <Video
           source={require('../../assets/localVideo/home.mp4')}
@@ -36,7 +90,12 @@ const Authentication = props => {
       </View>
       <View style={styles.section}>
         <Text
-          style={{fontSize: 48, alignSelf: 'center', fontFamily: 'Boiling'}}>
+          style={{
+            fontSize: 48,
+            color: c.colors.text.light,
+            alignSelf: 'center',
+            fontFamily: 'Boiling',
+          }}>
           JuggLearn
         </Text>
       </View>
@@ -71,7 +130,7 @@ const Authentication = props => {
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => props.navigation.navigate('modalStack')}>
+              onPress={() => onPressEmail()}>
               <LinearGradient
                 start={{x: 0, y: 0}}
                 end={{x: 0.5, y: 0}}
@@ -84,6 +143,7 @@ const Authentication = props => {
           </View>
         </View>
       </View>
+      <LoginForm />
     </View>
   );
 };
@@ -126,6 +186,39 @@ const styles = {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loginForm: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    width: '95%',
+    height: 0,
+  },
+  formAngle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    height: '110%',
+    width: '150%',
+    opacity: 0.9,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.95,
+    shadowRadius: 2.22,
+    elevation: 10,
+    backgroundColor: '#F3f3f3',
+    transform: [{rotate: '-10deg'}],
+    overflow: 'hidden',
+  },
+  formsContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flex: 1,
+    marginVertical: 20,
+    width: c.device.width,
   },
 };
 
