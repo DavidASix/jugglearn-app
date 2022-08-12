@@ -9,6 +9,7 @@ c.device = {
 c.colors = {
   gradient: {
     light: '#C9C9C9',
+    medium: '#777777',
     dark: '#404040',
   },
   balls: {

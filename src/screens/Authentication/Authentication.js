@@ -1,22 +1,30 @@
-import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  Animated,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {View, Text, Image, Animated, TouchableOpacity} from 'react-native';
 import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
 import IIcon from 'react-native-vector-icons/Ionicons';
+import SlideUpModal from '../../components/SlideUpModal/';
 
 const c = require('../../assets/constants');
 
 function Authentication(props) {
   const [emailPressed, setEmailPressed] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const [loginFormHeight] = useState(new Animated.Value(0));
-
+  const slideUpRef = useRef(null);
+  useEffect(() => {
+    console.log('mounted');
+    // handle video loading while screen refocuses
+    const screenFocusListener = props.navigation.addListener('blur', () => {
+      console.log('blurred');
+      setVideoLoaded(false);
+    });
+    return () => {
+      console.log('unmounted');
+      screenFocusListener();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const LoginForm = () => {
     //if (!emailPressed) return null;
     return (
@@ -45,6 +53,14 @@ function Authentication(props) {
     );
   };
 
+  const onPressGoogle = () => {
+    console.log('Google');
+  };
+
+  const onPressApple = () => {
+    console.log('Apple');
+  };
+
   const onPressEmail = () => {
     if (!emailPressed) {
       Animated.spring(loginFormHeight, {
@@ -62,6 +78,10 @@ function Authentication(props) {
     setEmailPressed(!emailPressed);
   };
 
+  const onPressNoSignIn = () => {
+    slideUpRef.current.changeVisibility();
+  };
+
   return (
     <View
       style={{
@@ -76,8 +96,16 @@ function Authentication(props) {
           resizeMode="cover"
           useTextureView={true}
           repeat={true}
-          style={{width: '100%', height: '100%'}}
+          onLoad={() => setVideoLoaded(true)}
+          style={{position: 'absolute', width: '100%', height: '100%'}}
         />
+        {!videoLoaded && (
+          <Image
+            source={require('../../assets/localVideo/homethumb.png')}
+            style={{position: 'absolute', width: '100%', height: '100%'}}
+            resizeMode="cover"
+          />
+        )}
       </View>
       <View style={styles.section}>
         <Image
@@ -106,7 +134,7 @@ function Authentication(props) {
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => props.navigation.navigate('modalStack')}>
+              onPress={() => onPressApple()}>
               <Image
                 source={require('../../assets/icons/appleSignIn.jpg')}
                 resizeMode="cover"
@@ -118,7 +146,7 @@ function Authentication(props) {
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => props.navigation.navigate('modalStack')}>
+              onPress={() => onPressGoogle()}>
               <Image
                 source={require('../../assets/icons/googleSignIn.jpg')}
                 resizeMode="cover"
@@ -142,11 +170,80 @@ function Authentication(props) {
             <Text style={styles.buttonText}>Email</Text>
           </View>
         </View>
+        <Text style={{fontSize: 10}}>or</Text>
+        <TouchableOpacity onPress={() => onPressNoSignIn(slideUpRef)}>
+          <Text style={{fontSize: 14, fontWeight: 'bold'}}>
+            Continue Without Account
+          </Text>
+        </TouchableOpacity>
       </View>
       <LoginForm />
+      <SlideUpModal
+        ref={slideUpRef}
+        style={{
+          width: '80%',
+          overflow: 'hidden',
+          borderRadius: 15,
+          borderColor: c.colors.gradient.light,
+        }}
+        peek={0}>
+        <LinearGradient
+          start={{x: 0.2, y: 0}}
+          end={{x: 1, y: 1}}
+          colors={[c.colors.gradient.light, c.colors.gradient.medium]}
+          style={{position: 'absolute', height: '100%', width: '100%'}}
+        />
+        <Image
+          source={require('../../assets/clubs.png')}
+          style={{
+            position: 'absolute',
+            height: 120,
+            width: 120,
+            top: -40,
+            left: -25,
+          }}
+        />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            paddingVertical: 15,
+            paddingHorizontal: 10,
+          }}>
+          <Text style={[styles.shadowText]}>Are you sure?</Text>
+          <Text style={[styles.noAccountText, styles.shadowText]}>
+            It's a better experience with an account!
+          </Text>
+          <Text style={[styles.noAccountText, styles.shadowText]}>
+            Using an account allows you to track & save your progress, earn
+            achievements, and do something else.
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              onPress={() => {
+                slideUpRef.current.changeVisibility();
+                props.navigation.navigate('modalStack');
+              }}
+              style={styles.noAccountButton}>
+              <Text style={{fontSize: 16, color: c.colors.text.light}}>
+                Continue
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => slideUpRef.current.changeVisibility()}
+              style={styles.noAccountButton}>
+              <Text style={{fontSize: 16, color: c.colors.text.light}}>
+                Go Back
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SlideUpModal>
     </View>
   );
-};
+}
 
 const styles = {
   videoContainer: {
@@ -219,6 +316,28 @@ const styles = {
     flex: 1,
     marginVertical: 20,
     width: c.device.width,
+  },
+  noAccountButton: {
+    backgroundColor: c.colors.gradient.medium,
+    borderColor: c.colors.gradient.dark,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    height: 30,
+    marginHorizontal: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+  },
+  noAccountText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  shadowText: {
+    textShadowColor: '#000',
+    textShadowRadius: 10,
+    textShadowOffset: {width: 1, height: 1},
   },
 };
 
