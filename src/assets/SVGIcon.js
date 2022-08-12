@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import React from 'react';
+import {Text} from 'react-native';
 
 import Exercises from './icons/Exercises.js';
 import Courses from './icons/Courses.js';
@@ -16,11 +16,9 @@ import Gear from './icons/Gear.js';
 import Eye from './icons/Eye.js';
 import EyeOff from './icons/EyeOff.js';
 
-
 //Icons
 
 export default function SVGIcon(props) {
-
   const icon = {
     exercises: <Exercises {...props} />,
     courses: <Courses {...props} />,
@@ -36,7 +34,11 @@ export default function SVGIcon(props) {
     gear: <Gear {...props} />,
     eye: <Eye {...props} />,
     eyeOff: <EyeOff {...props} />,
-   };
+  };
 
-  return icon[props.name] ?  icon[props.name] : <Text style={{color: 'red' }}>⛔</Text>;
+  return icon[props.name] ? (
+    icon[props.name]
+  ) : (
+    <Text style={{color: 'red'}}>⛔</Text>
+  );
 }
