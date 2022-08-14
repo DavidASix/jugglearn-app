@@ -1,12 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Animated,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import {View, Text, Image, Animated, TouchableOpacity} from 'react-native';
 import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
 import IIcon from 'react-native-vector-icons/Ionicons';
@@ -23,7 +16,12 @@ function Authentication(props) {
   const [password, setPassword] = useState(false);
   const [loginFormHeight] = useState(new Animated.Value(0));
   const [loginFormRot] = useState(new Animated.Value(1));
+  const rot = loginFormRot.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['-10deg', '10deg'],
+  });
   const slideUpRef = useRef(null);
+
   useEffect(() => {
     console.log('mounted');
     // handle video loading while screen refocuses
@@ -38,13 +36,146 @@ function Authentication(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const LoginForm = () => {
-    //if (!emailPressed) return null;
-    const rot = loginFormRot.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['-10deg', '10deg'],
-    });
-    return (
+  const onPressGoogle = () => {
+    console.log('Google');
+  };
+
+  const onPressApple = () => {
+    console.log('Apple');
+  };
+
+  const onPressEmail = () => {
+    if (!emailPressed) {
+      Animated.spring(loginFormHeight, {
+        toValue: 325,
+        useNativeDriver: false,
+      }).start();
+      Animated.spring(loginFormRot, {
+        toValue: 0,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(loginFormHeight, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: false,
+      }).start();
+      Animated.timing(loginFormRot, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }
+    setEmailPressed(!emailPressed);
+  };
+
+  const onPressNoSignIn = () => {
+    slideUpRef.current.changeVisibility();
+  };
+
+  return (
+    <View style={[c.styles.centerContent, c.styles.big]}>
+      {/**
+        Background Video
+      **/}
+      <View style={styles.videoContainer}>
+        <Video
+          source={require('../../assets/localVideo/home.mp4')}
+          resizeMode="cover"
+          useTextureView={true}
+          repeat={true}
+          onLoad={() => setVideoLoaded(true)}
+          style={{position: 'absolute', width: '100%', height: '100%'}}
+        />
+        {!videoLoaded && ( //May alternatively fade this out when unrendered
+          <Image
+            source={require('../../assets/localVideo/homethumb.png')}
+            style={{position: 'absolute', width: '100%', height: '100%'}}
+            resizeMode="cover"
+          />
+        )}
+      </View>
+      {/**
+        LogoSection
+      **/}
+      <View style={styles.section}>
+        <Image
+          source={require('../../assets/icons/icon.png')}
+          defaultSource={require('../../assets/icons/icon.png')}
+          style={{height: 100, width: 100, position: 'absolute'}}
+          resizeMethod="scale"
+          resizeMode="cover"
+        />
+      </View>
+      {/**
+        Title Section
+      **/}
+      <View style={styles.section}>
+        <Text
+          style={{
+            fontSize: 48,
+            color: c.colors.text.light,
+            alignSelf: 'center',
+            fontFamily: 'Boiling',
+          }}>
+          JuggLearn
+        </Text>
+      </View>
+      {/**
+        Sign in buttons
+      **/}
+      <View style={styles.section}>
+        <Text>Sign in with</Text>
+        <View style={styles.buttonRow}>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => onPressApple()}>
+              <Image
+                source={require('../../assets/icons/appleSignIn.jpg')}
+                resizeMode="cover"
+                style={{width: '100%', height: '100%'}}
+              />
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Apple</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => onPressGoogle()}>
+              <Image
+                source={require('../../assets/icons/googleSignIn.jpg')}
+                resizeMode="cover"
+                style={{width: '100%', height: '100%'}}
+              />
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Google</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => onPressEmail()}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 0.5, y: 0}}
+                colors={[c.colors.balls.red, c.colors.balls.blue]}
+                style={styles.gradButton}>
+                <IIcon name="mail-outline" size={25} color="#FFF" />
+              </LinearGradient>
+            </TouchableOpacity>
+            <Text style={styles.buttonText}>Email</Text>
+          </View>
+        </View>
+        <Text style={{fontSize: 10}}>or</Text>
+        <TouchableOpacity onPress={() => onPressNoSignIn(slideUpRef)}>
+          <Text style={{fontSize: 14, fontWeight: 'bold'}}>
+            Continue Without Account
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {/**
+        Login with Email Details
+      **/}
       <Animated.View style={[styles.loginForm, {height: loginFormHeight}]}>
         <Animated.View style={[styles.formAngle, {transform: [{rotate: rot}]}]}>
           <LinearGradient
@@ -99,142 +230,9 @@ function Authentication(props) {
           </TouchableOpacity>
         </View>
       </Animated.View>
-    );
-  };
-
-  const onPressGoogle = () => {
-    console.log('Google');
-  };
-
-  const onPressApple = () => {
-    console.log('Apple');
-  };
-
-  const onPressEmail = () => {
-    if (!emailPressed) {
-      Animated.spring(loginFormHeight, {
-        toValue: 325,
-        useNativeDriver: false,
-      }).start();
-      Animated.spring(loginFormRot, {
-        toValue: 0,
-        useNativeDriver: false,
-      }).start();
-    } else {
-      Animated.timing(loginFormHeight, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(loginFormRot, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    }
-    setEmailPressed(!emailPressed);
-  };
-
-  const onPressNoSignIn = () => {
-    slideUpRef.current.changeVisibility();
-  };
-  console.log(username);
-  return (
-    <View
-      style={{
-        flex: 1,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <View style={styles.videoContainer}>
-        <Video
-          source={require('../../assets/localVideo/home.mp4')}
-          resizeMode="cover"
-          useTextureView={true}
-          repeat={true}
-          onLoad={() => setVideoLoaded(true)}
-          style={{position: 'absolute', width: '100%', height: '100%'}}
-        />
-        {!videoLoaded && ( //May alternatively fade this out when unrendered
-          <Image
-            source={require('../../assets/localVideo/homethumb.png')}
-            style={{position: 'absolute', width: '100%', height: '100%'}}
-            resizeMode="cover"
-          />
-        )}
-      </View>
-      <View style={styles.section}>
-        <Image
-          source={require('../../assets/icons/icon.png')}
-          defaultSource={require('../../assets/icons/icon.png')}
-          style={{height: 100, width: 100, position: 'absolute'}}
-          resizeMethod="scale"
-          resizeMode="cover"
-        />
-      </View>
-      <View style={styles.section}>
-        <Text
-          style={{
-            fontSize: 48,
-            color: c.colors.text.light,
-            alignSelf: 'center',
-            fontFamily: 'Boiling',
-          }}>
-          JuggLearn
-        </Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text>Sign in with</Text>
-        <View style={styles.buttonRow}>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => onPressApple()}>
-              <Image
-                source={require('../../assets/icons/appleSignIn.jpg')}
-                resizeMode="cover"
-                style={{width: '100%', height: '100%'}}
-              />
-            </TouchableOpacity>
-            <Text style={styles.buttonText}>Apple</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => onPressGoogle()}>
-              <Image
-                source={require('../../assets/icons/googleSignIn.jpg')}
-                resizeMode="cover"
-                style={{width: '100%', height: '100%'}}
-              />
-            </TouchableOpacity>
-            <Text style={styles.buttonText}>Google</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => onPressEmail()}>
-              <LinearGradient
-                start={{x: 0, y: 0}}
-                end={{x: 0.5, y: 0}}
-                colors={[c.colors.balls.red, c.colors.balls.blue]}
-                style={styles.gradButton}>
-                <IIcon name="mail-outline" size={25} color="#FFF" />
-              </LinearGradient>
-            </TouchableOpacity>
-            <Text style={styles.buttonText}>Email</Text>
-          </View>
-        </View>
-        <Text style={{fontSize: 10}}>or</Text>
-        <TouchableOpacity onPress={() => onPressNoSignIn(slideUpRef)}>
-          <Text style={{fontSize: 14, fontWeight: 'bold'}}>
-            Continue Without Account
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <LoginForm />
+      {/**
+        Are you sure you don't want an account modal
+      **/}
       <SlideUpModal
         ref={slideUpRef}
         style={{
