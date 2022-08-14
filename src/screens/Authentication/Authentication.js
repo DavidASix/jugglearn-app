@@ -14,11 +14,22 @@ function Authentication(props) {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [username, setUsername] = useState(false);
   const [password, setPassword] = useState(false);
-  const [loginFormHeight] = useState(new Animated.Value(0));
-  const [loginFormRot] = useState(new Animated.Value(1));
-  const rot = loginFormRot.interpolate({
+  const [loginFormAnimation] = useState(new Animated.Value(0));
+  const loginRotation = loginFormAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['-10deg', '10deg'],
+    outputRange: ['10deg', '-10deg'],
+  });
+  const loginHeight = loginFormAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 325],
+  });
+  const loginBGHeight = loginFormAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
+  const bgOpacity = loginFormAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0.2],
   });
   const slideUpRef = useRef(null);
 
@@ -46,22 +57,13 @@ function Authentication(props) {
 
   const onPressEmail = () => {
     if (!emailPressed) {
-      Animated.spring(loginFormHeight, {
-        toValue: 325,
-        useNativeDriver: false,
-      }).start();
-      Animated.spring(loginFormRot, {
-        toValue: 0,
+      Animated.spring(loginFormAnimation, {
+        toValue: 1,
         useNativeDriver: false,
       }).start();
     } else {
-      Animated.timing(loginFormHeight, {
+      Animated.timing(loginFormAnimation, {
         toValue: 0,
-        duration: 250,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(loginFormRot, {
-        toValue: 1,
         duration: 200,
         useNativeDriver: false,
       }).start();
@@ -98,7 +100,7 @@ function Authentication(props) {
       {/**
         LogoSection
       **/}
-      <View style={styles.section}>
+      <Animated.View style={[styles.section, {opacity: bgOpacity}]}>
         <Image
           source={require('../../assets/icons/icon.png')}
           defaultSource={require('../../assets/icons/icon.png')}
@@ -106,11 +108,11 @@ function Authentication(props) {
           resizeMethod="scale"
           resizeMode="cover"
         />
-      </View>
+      </Animated.View>
       {/**
         Title Section
       **/}
-      <View style={styles.section}>
+      <Animated.View style={[styles.section, {opacity: bgOpacity}]}>
         <Text
           style={{
             fontSize: 48,
@@ -120,11 +122,11 @@ function Authentication(props) {
           }}>
           JuggLearn
         </Text>
-      </View>
+      </Animated.View>
       {/**
         Sign in buttons
       **/}
-      <View style={styles.section}>
+      <Animated.View style={[styles.section, {opacity: bgOpacity}]}>
         <Text>Sign in with</Text>
         <View style={styles.buttonRow}>
           <View>
@@ -172,17 +174,43 @@ function Authentication(props) {
             Continue Without Account
           </Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
       {/**
         Login with Email Details
       **/}
-      <Animated.View style={[styles.loginForm, {height: loginFormHeight}]}>
-        <Animated.View style={[styles.formAngle, {transform: [{rotate: rot}]}]}>
+      <Animated.View
+        style={{width: '100%', position: 'absolute', height: loginBGHeight}}>
+        <TouchableOpacity style={c.styles.big} onPress={() => onPressEmail()} />
+      </Animated.View>
+      <Animated.View style={[styles.loginForm, {height: loginHeight}]}>
+        <Animated.View
+          style={[styles.formAngle, {transform: [{rotate: loginRotation}]}]}>
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 0.2, y: 1}}
             colors={[c.colors.gradient.light, c.colors.gradient.dark]}
             style={{position: 'absolute', height: '100%', width: '100%'}}
+          />
+
+          <Image
+            source={require('../../assets/clubs.png')}
+            style={{
+              position: 'absolute',
+              height: 150,
+              width: 150,
+              top: -15,
+              right: '5%',
+            }}
+          />
+          <Image
+            source={require('../../assets/clubs2.png')}
+            style={{
+              position: 'absolute',
+              height: 150,
+              width: 150,
+              bottom: -15,
+              left: '5%',
+            }}
           />
         </Animated.View>
         <View style={styles.formsContainer}>
@@ -369,7 +397,8 @@ const styles = {
     alignItems: 'flex-start',
     flex: 1,
     paddingHorizontal: 10,
-    marginVertical: 15,
+    marginTop: 25,
+    marginBottom: 10,
     width: c.device.width,
   },
   noAccountButton: {
