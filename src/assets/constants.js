@@ -46,3 +46,5 @@ c.themes = {
   dark: {},
   light: {},
 };
+
+c.styles = require('./commonStyles');

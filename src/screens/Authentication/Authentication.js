@@ -1,16 +1,28 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, Image, Animated, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Animated,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
 import IIcon from 'react-native-vector-icons/Ionicons';
+import AIcon from 'react-native-vector-icons/AntDesign';
 import SlideUpModal from '../../components/SlideUpModal/';
+import StyledTextInput from '../../components/StyledTextInput/';
 
 const c = require('../../assets/constants');
 
 function Authentication(props) {
   const [emailPressed, setEmailPressed] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [username, setUsername] = useState(false);
+  const [password, setPassword] = useState(false);
   const [loginFormHeight] = useState(new Animated.Value(0));
+  const [loginFormRot] = useState(new Animated.Value(1));
   const slideUpRef = useRef(null);
   useEffect(() => {
     console.log('mounted');
@@ -25,29 +37,66 @@ function Authentication(props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const LoginForm = () => {
     //if (!emailPressed) return null;
+    const rot = loginFormRot.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['-10deg', '10deg'],
+    });
     return (
       <Animated.View style={[styles.loginForm, {height: loginFormHeight}]}>
-        <View style={[styles.formAngle, {position: 'absolute'}]}>
+        <Animated.View style={[styles.formAngle, {transform: [{rotate: rot}]}]}>
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 0.2, y: 1}}
             colors={[c.colors.gradient.light, c.colors.gradient.dark]}
             style={{position: 'absolute', height: '100%', width: '100%'}}
           />
-        </View>
+        </Animated.View>
         <View style={styles.formsContainer}>
           <Text
             style={{
-              fontSize: 24,
+              fontSize: 40,
               color: c.colors.text.light,
-              alignSelf: 'center',
               fontFamily: 'Boiling',
             }}>
             JuggLearn
           </Text>
-          <Text>Or sign up here</Text>
+          <Text style={{fontSize: 20, marginLeft: 20}}>Sign in to juggle!</Text>
+          <View style={[c.styles.centerContent, c.styles.big]}>
+            <StyledTextInput
+              placeholder="Username"
+              type="username"
+              value={username}
+              onChange={text => setUsername(text)}
+              icon="person-outline"
+            />
+            <StyledTextInput
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={text => setPassword(text)}
+              secure
+              icon="lock-closed-outline"
+            />
+            <View style={styles.loginButton}>
+              <LinearGradient
+                start={{x: 0, y: 0}}
+                end={{x: 0.5, y: 0}}
+                colors={[c.colors.balls.red, c.colors.balls.blue]}
+                style={[{position: 'absolute', left: 0}, c.styles.big]}
+              />
+              <Text>Login</Text>
+              <AIcon name="arrowright" size={25} color={c.colors.text.light} />
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => console.log('nav to signup')}
+            style={{alignSelf: 'center', alignItems: 'center'}}>
+            <Text style={{fontSize: 12}}>or</Text>
+            <Text style={{fontSize: 16}}>Or sign up here</Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
     );
@@ -64,13 +113,21 @@ function Authentication(props) {
   const onPressEmail = () => {
     if (!emailPressed) {
       Animated.spring(loginFormHeight, {
-        toValue: 300,
-        duration: 300,
+        toValue: 325,
+        useNativeDriver: false,
+      }).start();
+      Animated.spring(loginFormRot, {
+        toValue: 0,
         useNativeDriver: false,
       }).start();
     } else {
       Animated.timing(loginFormHeight, {
         toValue: 0,
+        duration: 250,
+        useNativeDriver: false,
+      }).start();
+      Animated.timing(loginFormRot, {
+        toValue: 1,
         duration: 200,
         useNativeDriver: false,
       }).start();
@@ -81,7 +138,7 @@ function Authentication(props) {
   const onPressNoSignIn = () => {
     slideUpRef.current.changeVisibility();
   };
-
+  console.log(username);
   return (
     <View
       style={{
@@ -99,7 +156,7 @@ function Authentication(props) {
           onLoad={() => setVideoLoaded(true)}
           style={{position: 'absolute', width: '100%', height: '100%'}}
         />
-        {!videoLoaded && (
+        {!videoLoaded && ( //May alternatively fade this out when unrendered
           <Image
             source={require('../../assets/localVideo/homethumb.png')}
             style={{position: 'absolute', width: '100%', height: '100%'}}
@@ -307,14 +364,14 @@ const styles = {
     shadowRadius: 2.22,
     elevation: 10,
     backgroundColor: '#F3f3f3',
-    transform: [{rotate: '-10deg'}],
     overflow: 'hidden',
   },
   formsContainer: {
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
-    marginVertical: 20,
+    paddingHorizontal: 10,
+    marginVertical: 15,
     width: c.device.width,
   },
   noAccountButton: {
@@ -338,6 +395,19 @@ const styles = {
     textShadowColor: '#000',
     textShadowRadius: 10,
     textShadowOffset: {width: 1, height: 1},
+  },
+  loginButton: {
+    maxHeight: 45,
+    height: '30%',
+    width: '40%',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    marginTop: 10,
+    borderRadius: 20,
+    elevation: 5,
+    overflow: 'hidden',
+    flexDirection: 'row',
   },
 };
 
