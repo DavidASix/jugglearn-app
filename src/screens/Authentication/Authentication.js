@@ -48,14 +48,17 @@ function Authentication(props) {
   }, []);
 
   const onPressGoogle = () => {
+    slideUpRef.current.changeVisibility('down');
     console.log('Google');
   };
 
   const onPressApple = () => {
+    slideUpRef.current.changeVisibility('down');
     console.log('Apple');
   };
 
   const onPressEmail = () => {
+    slideUpRef.current.changeVisibility('down');
     if (!emailPressed) {
       Animated.spring(loginFormAnimation, {
         toValue: 1,
@@ -287,14 +290,14 @@ function Authentication(props) {
           }}
         />
         <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            width: '100%',
-            paddingVertical: 15,
-            paddingHorizontal: 10,
-          }}>
+          style={[
+            c.styles.centerContent,
+            c.styles.big,
+            {
+              paddingVertical: 15,
+              paddingHorizontal: 10,
+            },
+          ]}>
           <Text style={[styles.shadowText]}>Are you sure?</Text>
           <Text style={[styles.noAccountText, styles.shadowText]}>
             It's a better experience with an account!
